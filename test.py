@@ -24,9 +24,9 @@ if __name__ == '__main__':
     start_time = time.time()
     test_acc, test_loss, test_report, test_confusion ,predict,label= evaluate(config, model, test_iter, test=True)
     file=open("OutPut.txt","w+",encoding='utf-8')
-    file1=open()
-    for line in predict:
-        file.write(str(line)+'\n')
+    file1=open("MyNews/data/test_data1.txt")
+    for line,pre in zip(file1,predict) :
+        file.write(line+'\n,'+pre);
 
     msg = 'Test Loss: {0:>5.2},  Test Acc: {1:>6.2%}'
     print(msg.format(test_loss, test_acc))
