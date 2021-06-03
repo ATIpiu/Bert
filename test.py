@@ -15,7 +15,7 @@ if __name__ == '__main__':
     model_name = args.model  # bert
     x = import_module('models.' + model_name)
     config = x.Config(dataset)
-    config.test_path = dataset + '/data/test_data.txt'
+    config.test_path = dataset + '/data/test_data1.txt'
     train_data, dev_data, test_data = build_dataset(config)
     test_iter = build_iterator(test_data, config)
     model = x.Model(config).to(config.device)
