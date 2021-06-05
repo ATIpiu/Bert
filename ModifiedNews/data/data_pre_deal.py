@@ -4,9 +4,9 @@ if __name__ == '__main__':
 
     csvFile =open('test_data.csv', 'r',encoding="utf-8")
     reader = csv.reader(csvFile)
-    file=open("test_data.txt", 'w+', encoding='utf-8')
+    file=open("E:/Bert/NineTitleNews/data/test_data.txt", 'w+', encoding='utf-8')
     csvFile.readline()
     for line in reader:
         if len(line)==3:
-            file.writelines(line[0][0:100]+' \t@'+line[1]+'\n')
+            file.writelines(line[2]+' \t@'+line[1]+'\n')
         else:print(line)
