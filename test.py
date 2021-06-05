@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(description='Chinese Text Classification')
 parser.add_argument('--model', type=str, required=True, help='choose a model: Bert, ERNIE')
 args = parser.parse_args()
 if __name__ == '__main__':
-    dataset = 'NineNews'  # 数据集
+    dataset = 'NineTitleNews'  # 数据集
 
     model_name = args.model  # bert
     x = import_module('models.' + model_name)
