@@ -23,8 +23,8 @@ if __name__ == '__main__':
     model.eval()
     start_time = time.time()
     test_acc, test_loss, test_report, test_confusion ,predict,label= evaluate(config, model, test_iter, test=True)
-    file=open("OutPut.txt","w+",encoding='utf-8')
-    file1=open("MyNews/data/test_data1.txt")
+    file=open(dataset+"/output/OutPut.txt","w+",encoding='utf-8')
+    file1=open(dataset+"/data/test_data.txt")
     for line,pre in zip(file1,predict) :
         file.write(line[0:-1]+','+str(pre)+'\n');
 
