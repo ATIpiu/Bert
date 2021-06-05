@@ -10,12 +10,12 @@ parser = argparse.ArgumentParser(description='Chinese Text Classification')
 parser.add_argument('--model', type=str, required=True, help='choose a model: Bert, ERNIE')
 args = parser.parse_args()
 if __name__ == '__main__':
-    dataset = 'MyNews'  # 数据集
+    dataset = 'NineNews'  # 数据集
 
     model_name = args.model  # bert
     x = import_module('models.' + model_name)
     config = x.Config(dataset)
-    config.test_path = dataset + '/data/test_data1.txt'
+    config.test_path = dataset + '/data/test_data.txt'
     train_data, dev_data, test_data = build_dataset(config)
     test_iter = build_iterator(test_data, config)
     model = x.Model(config).to(config.device)
