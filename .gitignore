@@ -2,3 +2,8 @@
 /ModifiedNews/data/test_data.csv
 /ModifiedNews/data/test.csv
 /ModifiedNews/data/dev.csv
+/MyNews/*
+/NineNews/data/dev.csv
+/NineNews/data/test.csv
+/NineNews/data/train.tmp
+/NineNews/data/train.csv
