@@ -8,5 +8,5 @@ if __name__ == '__main__':
     csvFile.readline()
     for line in reader:
         if len(line)==3:
-            file.writelines(line[0]+' \t@'+line[1]+'\n')
+            file.writelines(line[0][1:100]+' \t@'+line[1]+'\n')
         else:print(line)
