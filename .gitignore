@@ -7,3 +7,6 @@
 /NineNews/data/test.csv
 /NineNews/data/train.tmp
 /NineNews/data/train.csv
+/*/saved_dict/*
+/bert_pretrain/*
+/ERNIE_pretrain/*
