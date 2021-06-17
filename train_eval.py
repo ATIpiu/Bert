@@ -116,7 +116,11 @@ def evaluate(config, model, data_iter, test=False):
     acc = metrics.accuracy_score(labels_all, predict_all)
 
     if test:
-        report = metrics.classification_report(labels_all, predict_all, target_names=config.class_list, digits=4)
+        report=None
+        try:
+            report = metrics.classification_report(labels_all, predict_all, target_names=config.class_list, digits=4)
+        except(BaseException):
+            report = str(BaseException)
         confusion = metrics.confusion_matrix(labels_all, predict_all)
         return acc, loss_total / len(data_iter), report, confusion, predict_all,labels_all
     return acc, loss_total / len(data_iter)

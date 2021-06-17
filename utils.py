@@ -7,7 +7,7 @@ from datetime import timedelta
 PAD, CLS = '[PAD]', '[CLS]'  # padding符号, bert中综合信息符号
 
 
-def build_dataset(config):
+def build_dataset(config, test=False):
     def load_dataset(path, pad_size=32):
         contents = []
         with open(path, 'r', encoding='UTF-8') as f:
@@ -35,10 +35,34 @@ def build_dataset(config):
                 contents.append((token_ids, int(label), seq_len, mask))
         return contents
 
-    train = load_dataset(config.train_path, config.pad_size)
-    dev = load_dataset(config.dev_path, config.pad_size)
-    test = load_dataset(config.test_path, config.pad_size)
-    return train, dev, test
+    def load_data(text, pad_size=32):
+        contents = []
+        content, label = text.split('\t@')
+        token = config.tokenizer.tokenize(content)
+        token = [CLS] + token
+        seq_len = len(token)
+        mask = []
+        token_ids = config.tokenizer.convert_tokens_to_ids(token)
+
+        if pad_size:
+            if len(token) < pad_size:
+                mask = [1] * len(token_ids) + [0] * (pad_size - len(token))
+                token_ids += ([0] * (pad_size - len(token)))
+            else:
+                mask = [1] * pad_size
+                token_ids = token_ids[:pad_size]
+                seq_len = pad_size
+        contents.append((token_ids, int(label), seq_len, mask))
+        return contents
+    if not test:
+        train = load_dataset(config.train_path, config.pad_size)
+        dev = load_dataset(config.dev_path, config.pad_size)
+        test = load_dataset(config.test_path, config.pad_size)
+        return train, dev, test
+
+    else:
+        test = load_data(config.text, config.pad_size)
+        return test
 
 
 class DatasetIterater(object):
