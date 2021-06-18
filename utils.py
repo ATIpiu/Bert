@@ -54,6 +54,7 @@ def build_dataset(config, test=False):
                 seq_len = pad_size
         contents.append((token_ids, int(label), seq_len, mask))
         return contents
+
     if not test:
         train = load_dataset(config.train_path, config.pad_size)
         dev = load_dataset(config.dev_path, config.pad_size)
@@ -61,7 +62,10 @@ def build_dataset(config, test=False):
         return train, dev, test
 
     else:
-        test = load_data(config.text, config.pad_size)
+        if config.text != "":
+            test = load_data(config.text, config.pad_size)
+        else:
+            test = load_data(config.test_path, config.pad_size)
         return test
 
 

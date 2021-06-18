@@ -49,7 +49,7 @@ def fileTest(model, config, filepath=""):
 
 
 if __name__ == '__main__':
-    dataset = 'content_0.8w_0.8'  # 数据集
+    dataset = 'FinanceAndEstates'  # 数据集
     model_name = args.model  # bert
     x = import_module('models.' + model_name)
     config = x.Config(dataset)
