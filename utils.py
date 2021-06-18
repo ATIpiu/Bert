@@ -62,10 +62,11 @@ def build_dataset(config, test=False):
         return train, dev, test
 
     else:
+        test=None
         if config.text != "":
             test = load_data(config.text, config.pad_size)
         else:
-            test = load_data(config.test_path, config.pad_size)
+            test = load_dataset(config.test_path, config.pad_size)
         return test
 
 

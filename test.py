@@ -29,7 +29,7 @@ def singleTest(model, config, text):
 def fileTest(model, config, filepath=""):
     if filepath != "":
         config.test_path = filepath
-    train_data, dev_data, test_data = build_dataset(config)
+    test_data = build_dataset(config,True)
     start_time = time.time()
     test_iter = build_iterator(test_data, config)
     model.eval()
