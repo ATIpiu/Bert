@@ -10,6 +10,7 @@ import torch.nn.functional as F
 parser = argparse.ArgumentParser(description='Chinese Text Classification')
 parser.add_argument('--model', type=str, required=True, help='choose a model: Bert, ERNIE')
 parser.add_argument('--test', type=str, required=False, help='choose a testType :single or file')
+parser.add_argument('--data', type=str, required=True, help='choose a dataset :single or file')
 args = parser.parse_args()
 
 
@@ -49,15 +50,14 @@ def fileTest(model, config, filepath=""):
 
 
 if __name__ == '__main__':
-    dataset = 'FinanceAndEstates'  # 数据集
+    dataset = args.data # 数据集
     model_name = args.model  # bert
     x = import_module('models.' + model_name)
     config = x.Config(dataset)
     model = x.Model(config).to(config.device)
     model.load_state_dict(torch.load(config.save_path, map_location='cuda' if torch.cuda.is_available() else 'cpu'))
-    if args.test == 'file':
-        fileTest(model, config, config.test_path)
-
-    else:
+    if args.test == 'text':
         singleTest(model, config, "《高殿战记》再次迎来一波小更新。此次更新内容丰富，制作组诚意拉满。让我们来一睹为快！开发者收到多位玩家反馈，更新了制作界面。物品等	@7")
+    else:
+        fileTest(model, config, config.test_path)
 
