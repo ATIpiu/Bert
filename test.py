@@ -45,7 +45,8 @@ def fileTest(model, config, filepath=""):
     print("Confusion Matrix...")
     print(test_confusion)
     f1_micro = f1_score(label, predict, average='micro')
-    print("F1_Score:"+f1_micro)
+    print("F1_Score:")
+    print(f1_micro)
     time_dif = get_time_dif(start_time)
     print("Time usage:", time_dif)
 

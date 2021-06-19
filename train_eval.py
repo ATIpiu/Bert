@@ -90,14 +90,15 @@ def test(config, model, test_iter):
     start_time = time.time()
     test_acc, test_loss, test_report, test_confusion, predict_all, labels_all = evaluate(config, model, test_iter,
                                                                                          test=True)
-    msg = 'Test Loss: {0:>5.2},  Test Acc: {1:>6.2%}'
+    msg = "Test Loss: {0:>5.2},  Test Acc: {1:>6.2%}"
     print(msg.format(test_loss, test_acc))
     print("Precision, Recall and F1-Score...")
     print(test_report)
     print("Confusion Matrix...")
     print(test_confusion)
     f1_micro = f1_score(labels_all, predict_all, average='micro')
-    print("F1_Score:" + f1_micro)
+    print("F1_Score:")
+    print(f1_micro)
     time_dif = get_time_dif(start_time)
     print("Time usage:", time_dif)
 
