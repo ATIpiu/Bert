@@ -7,6 +7,7 @@ from sklearn import metrics
 import time
 from utils import get_time_dif
 from pytorch_pretrained.optimization import BertAdam
+from sklearn.metrics import f1_score
 
 
 # 权重初始化，默认xavier
@@ -87,13 +88,16 @@ def test(config, model, test_iter):
     model.load_state_dict(torch.load(config.save_path))
     model.eval()
     start_time = time.time()
-    test_acc, test_loss, test_report, test_confusion,predict_all,labels_all = evaluate(config, model, test_iter, test=True)
+    test_acc, test_loss, test_report, test_confusion, predict_all, labels_all = evaluate(config, model, test_iter,
+                                                                                         test=True)
     msg = 'Test Loss: {0:>5.2},  Test Acc: {1:>6.2%}'
     print(msg.format(test_loss, test_acc))
     print("Precision, Recall and F1-Score...")
     print(test_report)
     print("Confusion Matrix...")
     print(test_confusion)
+    f1_micro = f1_score(labels_all, predict_all, average='micro')
+    print("F1_Score:" + f1_micro)
     time_dif = get_time_dif(start_time)
     print("Time usage:", time_dif)
 
@@ -116,11 +120,11 @@ def evaluate(config, model, data_iter, test=False):
     acc = metrics.accuracy_score(labels_all, predict_all)
 
     if test:
-        report=None
+        report = None
         try:
             report = metrics.classification_report(labels_all, predict_all, target_names=config.class_list, digits=4)
-        except(BaseException):
+        except BaseException:
             report = str(BaseException)
         confusion = metrics.confusion_matrix(labels_all, predict_all)
-        return acc, loss_total / len(data_iter), report, confusion, predict_all,labels_all
+        return acc, loss_total / len(data_iter), report, confusion, predict_all, labels_all
     return acc, loss_total / len(data_iter)
