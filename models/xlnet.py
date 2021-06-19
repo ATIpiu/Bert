@@ -14,7 +14,7 @@ class Config(object):
         self.dev_path = dataset + '/data/dev.txt'  # 验证集
         self.test_path = dataset + '/data/test.txt'  # 测试集
         self.class_list = [x.strip() for x in open(
-            dataset + '/data/class.txt').readlines()]  # 类别名单
+            dataset + '/data/class.txt', encoding='utf-8').readlines()]  # 类别名单
         self.save_path = dataset + '/saved_dict/' + self.model_name + '.ckpt'  # 模型训练结果
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # 设备
 
@@ -27,6 +27,7 @@ class Config(object):
         self.xlnet_path = './xlnet_pretrain'
         self.tokenizer = XLNetTokenizer.from_pretrained(self.xlnet_path)
         self.hidden_size = 768
+        self.text = ""
 
 
 class Model(nn.Module):
@@ -44,10 +45,9 @@ class Model(nn.Module):
         self.fc = nn.Linear(config.hidden_size, config.num_classes)
 
     def forward(self, x):
-        context = x[0]  # 输入的句子
-        mask = x[2]  # 对padding部分进行mask，和句子一个size，padding部分用0表示，如：[1, 1, 1, 1, 0, 0]
-        encoder_out, text_cls = self.bert(context, attention_mask=mask, output_all_encoded_layers=False)
-        out, _ = self.lstm(encoder_out)
-        out = self.dropout(out)
-        out = self.fc_rnn(out[:, -1, :])  # 句子最后时刻的 hidden state
-        return out
+        x = x.long()
+        x = self.net(x, output_all_encoded_layers=False).last_hidden_state
+        x = F.dropout(x, self.alpha, training=self.training)
+        x = torch.max(x, dim=1)[0]
+        x = self.MLP(x)
+        return torch.sigmoid(x)
