@@ -10,6 +10,28 @@ from pytorch_pretrained.optimization import BertAdam
 from sklearn.metrics import f1_score
 
 
+class FGM():
+    def __init__(self, model):
+        self.model = model
+        self.backup = {}
+
+    def attack(self, epsilon=1., emb_name='emb.'):
+        # emb_name这个参数要换成你模型中embedding的参数名
+        for name, param in self.model.named_parameters():
+            if param.requires_grad and emb_name in name:
+                self.backup[name] = param.data.clone()
+                norm = torch.norm(param.grad)
+                if norm != 0 and not torch.isnan(norm):
+                    r_at = epsilon * param.grad / norm
+                    param.data.add_(r_at)
+
+    def restore(self, emb_name='emb.'):
+        # emb_name这个参数要换成你模型中embedding的参数名
+        for name, param in self.model.named_parameters():
+            if param.requires_grad and emb_name in name:
+                assert name in self.backup
+                param.data = self.backup[name]
+        self.backup = {}
 # 权重初始化，默认xavier
 def init_network(model, method='xavier', exclude='embedding', seed=123):
     for name, w in model.named_parameters():
@@ -54,6 +76,11 @@ def train(config, model, train_iter, dev_iter, test_iter):
             model.zero_grad()
             loss = F.cross_entropy(outputs, labels)
             loss.backward()
+            fgm = FGM(model)
+            fgm.attack()  # 在embedding上添加对抗扰动
+            loss_adv = F.cross_entropy(outputs, labels)
+            loss_adv.backward()  # 反向传播，并在正常的grad基础上，累加对抗训练的梯度
+            fgm.restore()  # 恢复embedding参数
             optimizer.step()
             if total_batch % 100 == 0:
                 # 每多少轮输出在训练集和验证集上的效果
