@@ -1,14 +1,7 @@
-/ModifiedNews/data/train.csv
-/ModifiedNews/data/test_data.csv
-/ModifiedNews/data/test.csv
-/ModifiedNews/data/dev.csv
-/MyNews/*
-/NineNews/data/dev.csv
-/NineNews/data/test.csv
-/NineNews/data/train.tmp
-/NineNews/data/train.csv
 /*/saved_dict/*
 /bert_pretrain/*
 /ERNIE_pretrain/*
 /xlnet_pretrain/*
+/content_2w_0.8_128/*
+/content_0.8/*
 
