@@ -32,6 +32,8 @@ class FGM():
                 assert name in self.backup
                 param.data = self.backup[name]
         self.backup = {}
+
+
 # 权重初始化，默认xavier
 def init_network(model, method='xavier', exclude='embedding', seed=123):
     for name, w in model.named_parameters():
@@ -74,11 +76,11 @@ def train(config, model, train_iter, dev_iter, test_iter):
         for i, (trains, labels) in enumerate(train_iter):
             outputs = model(trains)
             model.zero_grad()
-            loss = F.cross_entropy(outputs, labels)
+            loss = model(trains, labels)
             loss.backward()
             fgm = FGM(model)
             fgm.attack()  # 在embedding上添加对抗扰动
-            loss_adv = F.cross_entropy(outputs, labels)
+            loss_adv = model(outputs, labels)
             loss_adv.backward()  # 反向传播，并在正常的grad基础上，累加对抗训练的梯度
             fgm.restore()  # 恢复embedding参数
             optimizer.step()
