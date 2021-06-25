@@ -80,7 +80,7 @@ def train(config, model, train_iter, dev_iter, test_iter):
             loss.backward()
             fgm = FGM(model)
             fgm.attack()  # 在embedding上添加对抗扰动
-            loss_adv = model(outputs, labels)
+            loss_adv = model(trains, labels)
             loss_adv.backward()  # 反向传播，并在正常的grad基础上，累加对抗训练的梯度
             fgm.restore()  # 恢复embedding参数
             optimizer.step()
