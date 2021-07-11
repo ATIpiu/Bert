@@ -12,7 +12,17 @@ parser.add_argument('--test', type=str, required=False, help='choose a testType 
 parser.add_argument('--data', type=str, required=True, help='choose a dataset :single or file')
 args = parser.parse_args()
 
-
+classDic = {0: "财经",
+            1: "房产",
+            2: "教育",
+            3: "科技",
+            4: "军事",
+            5: "汽车",
+            6: "体育",
+            7: "游戏",
+            8: "娱乐",
+            9: "其他",
+            }
 def singleTest(model, config, text):
     start_time = time.time()
     config.batch_size = 1
@@ -37,7 +47,7 @@ def fileTest(model, config, filepath=""):
     file = open(dataset + "/output/" + model_name + "OutPut.txt", "w+", encoding='utf-8')
     file1 = open(dataset + "/data/test.txt", encoding='utf-8')
     for line, pre in zip(file1, predict):
-        file.write(line[0:-1] + ',' + str(pre) + '\n')
+        file.write(line.split('\t@')[0]+'@'+classDic[int(line.split('\t@')[1][0])] + ',' + classDic[pre] + '\n')
     msg = 'Test Loss: {0:>5.2},  Test Acc: {1:>6.2%}'
     print(msg.format(test_loss, test_acc))
     print("Precision, Recall and F1-Score...")
@@ -52,7 +62,7 @@ def fileTest(model, config, filepath=""):
 
 
 if __name__ == '__main__':
-    dataset = args.data  # 数据集
+    dataset = 'dataset/'+args.data  # 数据集
     model_name = args.model  # bert
     x = import_module('models.' + model_name)
     config = x.Config(dataset)
