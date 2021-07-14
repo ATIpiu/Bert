@@ -1,4 +1,6 @@
 import time
+
+import openpyxl
 import torch
 from train_eval import evaluate
 from importlib import import_module
@@ -23,6 +25,8 @@ classDic = {0: "财经",
             8: "娱乐",
             9: "其他",
             }
+
+
 def singleTest(model, config, text):
     start_time = time.time()
     config.batch_size = 1
@@ -47,7 +51,7 @@ def fileTest(model, config, filepath=""):
     file = open(dataset + "/output/" + model_name + "OutPut.txt", "w+", encoding='utf-8')
     file1 = open(dataset + "/data/test.txt", encoding='utf-8')
     for line, pre in zip(file1, predict):
-        file.write(line.split('\t@')[0]+'@'+classDic[int(line.split('\t@')[1][0])] + ',' + classDic[pre] + '\n')
+        file.write(line.split('\t@')[0] + '@' + classDic[int(line.split('\t@')[1][0])] + ',' + classDic[pre] + '\n')
     msg = 'Test Loss: {0:>5.2},  Test Acc: {1:>6.2%}'
     print(msg.format(test_loss, test_acc))
     print("Precision, Recall and F1-Score...")
@@ -61,6 +65,29 @@ def fileTest(model, config, filepath=""):
     print("Time usage:", time_dif)
 
 
+def fileTest1(model, config, filepath=""):
+    filepath = "test.xlsx"
+    test_data = build_dataset(config, True)
+    start_time = time.time()
+    test_iter = build_iterator(test_data, config)
+    model.eval()
+    test_acc, test_loss, test_report, test_confusion, predict, label = evaluate(config, model, test_iter, test=True)
+    if filepath.split(".")[1] == "xlsx":
+        workBook = openpyxl.load_workbook(filepath)
+        sheets = workBook.sheetnames
+        sheet = workBook[sheets[0]]
+        l = 0
+        for row, pre in zip(sheet.iter_rows(), predict):
+            l += 1
+            row[1].value = classDic[pre]
+        workBook.save(filepath)
+        workBook.close()
+    end_time = time.time()
+    print("已完成!!!\n总用时(秒):" + str(float(round(end_time * 1000 - start_time * 1000)) / 1000))
+    print("Time usage:", int(round(end_time * 1000 - start_time * 1000)))
+    print("finished")
+
+
 if __name__ == '__main__':
     dataset = args.data  # 数据集
     model_name = args.model  # bert
@@ -71,4 +98,4 @@ if __name__ == '__main__':
     if args.test == 'text':
         singleTest(model, config, "《高殿战记》再次迎来一波小更新。此次更新内容丰富，制作组诚意拉满。让我们来一睹为快！开发者收到多位玩家反馈，更新了制作界面。物品等	@7")
     else:
-        fileTest(model, config, config.test_path)
+        fileTest1(model, config, config.test_path)
